@@ -22,7 +22,7 @@ fpsent* aimbot::get_closest_screen_entity(bool fov_check = false)
 	fpsent* b_entity = nullptr;
 	float b_dist = LLONG_MAX;
 
-	static auto center = screen_t(gl::window_width / 2, gl::window_height / 2);
+	auto center = screen_t(gl::window_width / 2, gl::window_height / 2);
 	for (const auto& [entity, position] : s_entities)
 	{	
 		auto delta = position - center;
