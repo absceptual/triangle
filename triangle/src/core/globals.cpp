@@ -14,9 +14,9 @@ bool globals::init()
 	if (!entitylist)
 		return false;
 
-	view_matrix = reinterpret_cast<float*>(globals::base + offsets::viewmatrix);
+	view_matrix  = reinterpret_cast<float*>(globals::base + offsets::viewmatrix);
 	player_count = reinterpret_cast<int*>(globals::base + offsets::player_count);
-	gamemode = reinterpret_cast<uint8_t*>(globals::base + offsets::gamemode);
-
+	gamemode     = reinterpret_cast<uint8_t*>(globals::base + offsets::gamemode);
+	pushback     = reinterpret_cast<void*>(globals::base + offsets::pushback_offset);
 	return true;
 }

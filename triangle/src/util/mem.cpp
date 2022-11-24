@@ -17,7 +17,11 @@ void memory::nop(void* target, const size_t size)
 	auto nops{ std::make_unique<uint8_t[]>(size) };
 	memset(nops.get(), 0x90, size);
 
-	memory::patch(nops.get(), target, size);
+	memory::patch(target, static_cast<void*>(nops.get()), size);
+}
+
+void memory::unpatch()
+{
 }
 
 bool memory::detour(void* target, void* code, const size_t size)
@@ -97,6 +101,16 @@ void memory::untramphook(memory::trampoline_data* data)
 
 	// Optionally deallocate our gateway (size of stolen bytes + bytecode) and delete our trampoline_data
 	VirtualAlloc(data->gateway, data->size + 12, MEM_RESET, PAGE_NOACCESS);
+	data->gateway = data->address;
 	delete data;
 
+}
+
+bool memory::is_valid_ptr(void* base, void* pointer)
+{
+	MEMORY_BASIC_INFORMATION mbi{ };
+	if (!VirtualQuery(base, &mbi, sizeof(mbi)))
+		return false;
+
+	return IsBadReadPtr(pointer, mbi.RegionSize);
 }

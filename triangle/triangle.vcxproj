@@ -141,6 +141,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\hacks\exploits.cpp" />
+    <ClCompile Include="src\hacks\aimbot.cpp" />
     <ClCompile Include="src\hacks\esp.cpp" />
     <ClCompile Include="src\core\hooks.cpp" />
     <ClCompile Include="src\core\globals.cpp" />
@@ -150,6 +152,8 @@
     <ClCompile Include="src\util\gl\text.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\hacks\exploits.h" />
+    <ClInclude Include="src\hacks\aimbot.h" />
     <ClInclude Include="src\hacks\esp.h" />
     <ClInclude Include="src\core\hooks.h" />
     <ClInclude Include="src\util\mem.h" />

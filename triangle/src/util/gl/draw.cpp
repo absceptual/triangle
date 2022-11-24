@@ -79,3 +79,29 @@ void gl::draw_line(screen_t from, screen_t to, const GLubyte color[3], float thi
 	glVertex2f(to.x, to.y);
 	glEnd();
 }
+
+void gl::draw_circle(screen_t position, float radius, const GLubyte color[3])
+{
+
+	// https://www.youtube.com/watch?v=NnutNkde5TE (thank you, indian man.)
+
+	float theta;
+	glColor3ub(color[0], color[1], color[2]);
+	glBegin(GL_LINE_STRIP);
+
+	for (int i = 0; i < 360; ++i)
+	{
+		theta = i * std::numbers::pi_v<float> / 180;
+		glVertex2f(position.x + radius * cos(theta), position.y + (radius * sin(theta)));
+	}
+	
+	glEnd();
+}
+
+bool gl::is_within_radius(screen_t position, screen_t c_origin, float radius)
+{
+	bool in_x = (position.x >= c_origin.x - radius) && (position.x <= c_origin.x + radius);
+	bool in_y = (position.y >= c_origin.y - radius) && (position.y <= c_origin.y + radius);
+
+	return in_x && in_y;
+}

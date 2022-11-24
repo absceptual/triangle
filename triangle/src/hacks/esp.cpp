@@ -1,35 +1,30 @@
 #include "esp.h"
 
 
+
+
 void esp::run()
 {
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	gl::window_width = viewport[2];
+	gl::window_height = viewport[3];
+
     for (int i = 0; i < *globals::player_count; ++i) {
         auto entity = globals::entitylist->get_entity(i);
-        if (entity && entity != globals::lplayer)
+
+        if (entity != globals::lplayer && entity->is_valid())
         {
-         
-           // auto head = entity->position;
-            //auto origin = entity->origin();
-            vec_t p1 = entity->origin();
-            vec_t p2 = entity->position;
+			if (settings::esp::ingame_boxes)
+				draw_3d_box(entity);
 
+			if (settings::esp::bounding_boxes)
+				draw_box(entity);
 
-            screen_t _p1, _p2;
-            if (!gl::world_to_screen(p1, _p1, globals::view_matrix) || !gl::world_to_screen(p2, _p2, globals::view_matrix))
-                continue;
-
-            float height = _p1.y - _p2.y;
-            float width = height * (45.f / 80.f); 
-            // gl::draw_rect(_p2.x - width / 2, _p2.y, width, height, 2.0f, rgb::green);
-			esp::draw_3d_box(entity);
-			esp::draw_line(entity);
+			if (settings::esp::snaplines)
+				draw_line(entity);
         }
     }
-}
-
-bool esp::is_valid_entity(fpsent* entity)
-{
-	return entity && entity->health && entity->alive;
 }
 
 bool esp::is_teammate(fpsent* entity)
@@ -39,6 +34,11 @@ bool esp::is_teammate(fpsent* entity)
 		return false;
 
 	return !strcmp(entity->team, globals::lplayer->team);
+}
+
+const GLubyte* esp::get_color(fpsent* entity)
+{
+	return esp::is_teammate(entity) ? rgb::green : rgb::red;
 }
 
 void esp::draw_3d_box(fpsent* entity)
@@ -92,14 +92,15 @@ void esp::draw_3d_box(fpsent* entity)
 			return;
 	}
 
+	auto color = get_color(entity);
 	// Bottom box
 	for (int i = 0; i < 4; ++i)
 	{
 		// Connect final line to original point
 		if (i == 3)
-			gl::draw_line(s_bottom[3], s_bottom[0], rgb::green, 3.0f);
+			gl::draw_line(s_bottom[3], s_bottom[0], color, 3.0f);
 		else
-			gl::draw_line(s_bottom[i], s_bottom[i + 1], rgb::green, 3.0f);
+			gl::draw_line(s_bottom[i], s_bottom[i + 1], color, 3.0f);
 	}
 
 	// Top box
@@ -107,16 +108,44 @@ void esp::draw_3d_box(fpsent* entity)
 	{
 
 		if (i == 3)
-			gl::draw_line(s_top[3], s_top[0], rgb::green, 3.0f);
+			gl::draw_line(s_top[3], s_top[0], color, 3.0f);
 		else
-			gl::draw_line(s_top[i], s_top[i + 1], rgb::green, 3.0f);
+			gl::draw_line(s_top[i], s_top[i + 1], color, 3.0f);
 	}
 
 	// Connect top to bottom
 	for (int i = 0; i < 4; ++i)
 	{
-		gl::draw_line(s_bottom[i], s_top[i], rgb::green, 3.0f);
+		gl::draw_line(s_bottom[i], s_top[i], color, 3.0f);
 	}
+}
+
+void esp::draw_fov(float radius)
+{
+	const GLubyte* color;
+	if (aimbot::get_closest_screen_entity(true))
+		color = rgb::red;
+	else
+		color = rgb::white;
+
+	gl::draw_circle(screen_t(gl::window_width / 2, gl::window_height / 2), radius, color);
+}
+
+
+void esp::draw_box(fpsent* entity)
+{
+	vec_t origin = entity->origin();
+	vec_t head = entity->position;
+
+	screen_t s_origin, s_head;
+	if (!gl::world_to_screen(origin, s_origin, globals::view_matrix) || !gl::world_to_screen(head, s_head, globals::view_matrix))
+		return;
+
+	float height = s_origin.y - s_head.y;
+	float width = height * (45.f / 80.f);
+
+	auto color = get_color(entity);
+	gl::draw_rect(s_head.x - width / 2, s_head.y, width, height, 2.0f, color);
 }
 
 void esp::draw_line(fpsent* entity)
@@ -127,11 +156,6 @@ void esp::draw_line(fpsent* entity)
 	if (!gl::world_to_screen(origin, s_origin, globals::view_matrix))
 		return;
 
-	const GLubyte* color;
-	if (esp::is_teammate(entity))
-		color = rgb::green;
-	else
-		color = rgb::red;
-
+	auto color = get_color(entity);
 	gl::draw_line(screen_t( gl::window_width / 2, gl::window_height ), s_origin, color, 2.0f);
 }

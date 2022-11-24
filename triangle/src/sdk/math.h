@@ -21,7 +21,16 @@ public:
 	float Distance(const Vector3& rhs) const { return (*this - rhs).Length(); }
 };
 
-struct Vector2 { float x, y; };
+class Vector2 { 
+public:
+	float x, y; 
+
+public:
+	Vector2(const float x = 0.0, const float y = 0.0) : x(x), y(y) {}
+
+	Vector2 operator + (const Vector2& rhs) const { return Vector2(x + rhs.x, y + rhs.y); }
+	Vector2 operator - (const Vector2& rhs) const { return Vector2(x - rhs.x, y - rhs.y); }
+};
 struct Vector4 { float x, y, z, w; };
 
 

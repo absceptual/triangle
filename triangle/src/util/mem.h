@@ -5,10 +5,19 @@
 
 #include <Windows.h>
 
+
 namespace memory
 {
 	void patch(void* target, void* data, const size_t size);
 	void nop(void* target, const size_t size);
+
+	void unpatch();
+	struct patch_data
+	{
+		std::unique_ptr<uint8_t[]> o_bytes{ nullptr };
+		size_t size{ 0x0 };
+		void* address{ nullptr };
+	};
 
 	struct trampoline_data
 	{
@@ -23,6 +32,8 @@ namespace memory
 	void untramphook(memory::trampoline_data* data);
 
 	inline std::unordered_map<void*, trampoline_data*> trampolines; // Returns a trampoline data structure for whatever gateway is passed
+
+	bool is_valid_ptr(void* base, void* pointer);
 
 	template <typename Return, typename... Arguments>
 	constexpr Return call(void* vmt, const uint32_t index, Arguments... args)

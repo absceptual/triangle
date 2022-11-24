@@ -1,7 +1,9 @@
 #pragma once
 #include <array>
 
+#include "../util/mem.h"
 #include "../sdk/math.h"
+
 
 constexpr int PLAYER_HEIGHT     = 15;
 constexpr int PLAYER_WIDTH      = 4;
@@ -28,13 +30,14 @@ public:
 		DEFINE_MEMBER_N(velocity_t, left, 0xC);
 		DEFINE_MEMBER_N(velocity_t, forward, 0x10);
 		DEFINE_MEMBER_N(velocity_t, up, 0x14);
+		DEFINE_MEMBER_N(vec_t, manual_velocity, 0x18);
 		DEFINE_MEMBER_N(vec_t, position, 0x30);
 		DEFINE_MEMBER_N(float, yaw, 0x3C);
 		DEFINE_MEMBER_N(float, pitch, 0x40);
 		DEFINE_MEMBER_N(float, height, 0x50);
 		DEFINE_MEMBER_N(float, nametag_offset, 0x54);
 		DEFINE_MEMBER_N(float, width, 0x58);
-		DEFINE_MEMBER_N(bool, alive, 0x77);
+		DEFINE_MEMBER_N(bool, dead, 0x77);
 		DEFINE_MEMBER_N(int32_t, health, 0x178);
 		DEFINE_MEMBER_N(int32_t, max_health, 0x17C);
 		DEFINE_MEMBER_N(int32_t, armor, 0x180);
@@ -48,6 +51,7 @@ public:
 
 public:
 	vec_t origin() { auto origin = this->position; origin.z -= PLAYER_HEIGHT; return origin; }
+	bool is_valid() { return this != nullptr && this->health && !this->dead; }
 
 };
 
