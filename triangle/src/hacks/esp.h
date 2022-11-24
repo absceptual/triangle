@@ -24,4 +24,5 @@ namespace esp
 	void draw_line(fpsent* entity);
 	void draw_3d_box(fpsent* entity);
 	void draw_fov(float radius);
+	void draw_name(fpsent* entity);
 }

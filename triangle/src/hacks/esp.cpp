@@ -35,7 +35,9 @@ void esp::draw_menu()
 void esp::run()
 {
 	GLint viewport[4];
+	glViewport(0, 0, viewport[2], viewport[3]);
 	glGetIntegerv(GL_VIEWPORT, viewport);
+	
 	gl::window_width = viewport[2];
 	gl::window_height = viewport[3];
 
@@ -52,6 +54,8 @@ void esp::run()
 
 			if (settings::esp::snaplines)
 				draw_line(entity);
+
+			esp::draw_name(entity);
         }
     }
 }
@@ -158,6 +162,20 @@ void esp::draw_fov(float radius)
 		color = rgb::white;
 
 	gl::draw_circle(screen_t(gl::window_width / 2, gl::window_height / 2), radius, color);
+}
+
+void esp::draw_name(fpsent* entity)
+{
+	vec_t head = entity->position;
+	head.x += 2;
+	head.z += 7;
+
+	screen_t s_head;
+	if (!gl::world_to_screen(head, s_head, globals::view_matrix))
+		return;
+
+	esp::font.Print(s_head.x, s_head.y + 10, rgb::white, "%s", entity->name);
+
 }
 
 void esp::draw_box(fpsent* entity)

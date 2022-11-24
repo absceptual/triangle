@@ -51,7 +51,7 @@ public:
 
 public:
 	vec_t origin() { auto origin = this->position; origin.z -= PLAYER_HEIGHT; return origin; }
-	bool is_valid() { return this != nullptr && this->health && !this->dead; }
+	bool is_valid() { return uintptr_t(this) && this != nullptr && this->health && !this->dead; }
 
 };
 
