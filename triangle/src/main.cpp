@@ -30,13 +30,6 @@ DWORD cleanup(HMODULE module, FILE* output)
 	FreeLibraryAndExitThread(module, 0);
 
 	// Unhook any existing trampoline hooks and restore any byte patching (unsafe!)
-
-	// FIX DEHOOKING
-	memory::untramphook(hooks::swapbuffers);
-	memory::untramphook(hooks::raycast);
-	memory::unpatch();
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	return 0;
 }
 
@@ -57,6 +50,11 @@ DWORD WINAPI entry_point(HMODULE module)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
+
+	// FIX DEHOOKING
+	memory::untramphook(hooks::swapbuffers);
+	memory::untramphook(hooks::raycast);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	return cleanup(module, output);
 }

@@ -16,11 +16,11 @@ namespace gl
 		bool bBuilt = false;
 		GLuint base;
 		HDC hdc = nullptr;
-		int height;
-		int width;
+		int height = 15;
+		int width = 9;
 
 	public:
-		void Build(int height);
+		void Build();
 		void Print(float x, float y, const GLubyte color[3], const char* format, ...);
 
 		vec_t center(float x, float y, float width, float height, float textWidth, float textHeight);

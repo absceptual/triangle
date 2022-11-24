@@ -1,6 +1,35 @@
 #include "esp.h"
 
+#define GET_MENU_COLOR(flag) flag ? rgb::green : rgb::red
+const char* title = "<triangle>";
 
+void print_option(screen_t origin, const char* option, int& offset, const GLubyte color[3] = rgb::white)
+{
+	float position = esp::font.center((gl::window_width / 2) - 50, strlen(title) * esp::font.width, strlen(option) * esp::font.width);
+	esp::font.Print(position, origin.y + offset, color, option);
+
+	offset += 20;
+}
+
+void esp::draw_menu()
+{
+	auto top = screen_t((gl::window_width / 2) - 50, 30);
+	auto offset = 20;
+
+
+	esp::font.Print(top.x, top.y, rgb::white, title);
+
+	print_option(top, "[F10] Toggle Menu", offset);
+	print_option(top, "[F2] Toggle ESP", offset, GET_MENU_COLOR(settings::esp::enabled));
+	print_option(top, "[F3] Toggle Bounding Boxes", offset, GET_MENU_COLOR(settings::esp::bounding_boxes));
+	print_option(top, "[F4] Toggle 3D Box", offset, GET_MENU_COLOR(settings::esp::ingame_boxes));
+	print_option(top, "[F5] Toggle Snaplines", offset, GET_MENU_COLOR(settings::esp::snaplines));
+
+	offset += 30;
+	print_option(top, "[F6] No Recoil", offset, GET_MENU_COLOR(settings::exploits::recoil));
+	print_option(top, "[F7] Silent Aim", offset, GET_MENU_COLOR(settings::exploits::silent_aim));
+	print_option(top, "[F8] Infinite Jump", offset, GET_MENU_COLOR(settings::exploits::infinite_jump));
+}
 
 
 void esp::run()
@@ -130,7 +159,6 @@ void esp::draw_fov(float radius)
 
 	gl::draw_circle(screen_t(gl::window_width / 2, gl::window_height / 2), radius, color);
 }
-
 
 void esp::draw_box(fpsent* entity)
 {

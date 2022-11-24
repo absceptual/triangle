@@ -19,6 +19,7 @@ namespace esp
 	bool is_teammate(fpsent* entity);
 	const GLubyte* get_color(fpsent* entity);
 
+	void draw_menu();
 	void draw_box(fpsent* entity);
 	void draw_line(fpsent* entity);
 	void draw_3d_box(fpsent* entity);

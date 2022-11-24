@@ -2,7 +2,7 @@
 #include "text.h"
 
 
-void gl::Font::Build(int height)
+void gl::Font::Build()
 {
 	hdc = wglGetCurrentDC();
 	base = glGenLists(96);

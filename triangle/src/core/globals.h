@@ -3,6 +3,8 @@
 
 #include "../sdk/entities.h"
 
+
+
 namespace globals
 {
 	inline uintptr_t base;
@@ -15,7 +17,6 @@ namespace globals
 	inline float* view_matrix;
 	inline void* pushback;
 
-	inline bool silent_enabled{ true };
 	bool init();
 }
 
@@ -31,26 +32,26 @@ namespace offsets
 
 namespace settings
 {
+	inline bool menu			   = true;
 	namespace esp
 	{
-		inline bool enabled        = true;
+		inline bool enabled        = false;
 		inline bool bounding_boxes = false;
-		inline bool ingame_boxes   = true;
-		inline bool snaplines      = true;
+		inline bool ingame_boxes   = false;
+		inline bool snaplines      = false;
 	}
 
 	namespace aimbot
 	{
-		inline bool enabled        = true;
+		inline bool enabled        = false;
 		inline float radius        = 100.0f;
 		inline bool friendly_fire  = false;
 	}
 
 	namespace exploits
 	{
-		inline bool silent_aim     = true;
-		inline bool infinite_ammo  = true;
-		inline bool recoil		   = true;
-		inline bool infinite_jump  = true;
+		inline bool silent_aim     = false;
+		inline bool recoil		   = false;
+		inline bool infinite_jump  = false;
 	}
 }

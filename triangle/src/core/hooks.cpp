@@ -21,7 +21,7 @@ bool hooks::init()
 fpsent* __fastcall hooks::hk_raycast(const vec_t* from, const vec_t* to, fpsent* entity, float* b_dist)
 {
     // Check if silent aim is enabled and our local player is calling the function
-    if (globals::silent_enabled && entity == globals::lplayer)
+    if (settings::exploits::silent_aim && entity == globals::lplayer)
     {
         auto target = aimbot::get_closest_screen_entity(true);
         if (target)
@@ -63,7 +63,7 @@ BOOL __stdcall hooks::hk_swapbuffers(HDC hdc)
     
 
     if (esp::font.hdc != hdc || !esp::font.bBuilt)
-        esp::font.Build(esp::font.height);
+        esp::font.Build();
 
 
     gl::setup();
@@ -71,36 +71,61 @@ BOOL __stdcall hooks::hk_swapbuffers(HDC hdc)
     gl::restore();
 
     wglMakeCurrent(o_hdc, o_ctx);
-    return reinterpret_cast<swapbuffers_t>(hooks::swapbuffers->gateway)(hdc);
+
+    if (hooks::swapbuffers)
+        return reinterpret_cast<swapbuffers_t>(hooks::swapbuffers->gateway)(hdc);
+
+    return TRUE;
+   
 }
 
 void hooks::run()
 {
+    if (GetAsyncKeyState(VK_F10 ) & 1)
+        settings::menu = !settings::menu;
+
+
+    if (GetAsyncKeyState(VK_F2) & 1)
+        settings::esp::enabled = !settings::esp::enabled;
+
+    if (GetAsyncKeyState(VK_F3) & 1)
+        settings::esp::bounding_boxes = !settings::esp::bounding_boxes;
+
+    if (GetAsyncKeyState(VK_F4) & 1)
+        settings::esp::ingame_boxes = !settings::esp::ingame_boxes;
+
     if (GetAsyncKeyState(VK_F5) & 1)
-    {
-        settings::exploits::recoil = !settings::exploits::recoil;
-        exploits::push_back();
-    }
+        settings::esp::snaplines = !settings::esp::snaplines;
 
     if (GetAsyncKeyState(VK_F6) & 1)
-        settings::exploits::infinite_ammo = !settings::exploits::infinite_ammo;
+    {
+        settings::exploits::recoil = !settings::exploits::recoil;
+        exploits::no_recoil();
+    }
 
     if (GetAsyncKeyState(VK_F7) & 1)
+        settings::exploits::silent_aim = !settings::exploits::silent_aim;
+
+    if (GetAsyncKeyState(VK_F8) & 1)
         settings::exploits::infinite_jump = !settings::exploits::infinite_jump;
 
-    if (GetAsyncKeyState(VK_DOWN) & 1)
-        aimbot::radius -= 50;
-    else if (GetAsyncKeyState(VK_UP) & 1)
-        aimbot::radius += 50;
+    if (GetAsyncKeyState(VK_ADD) & 1)
+        aimbot::radius += 25;
+
+    else if (GetAsyncKeyState(VK_SUBTRACT) & 1)
+        aimbot::radius -= 25;
 
     if (GetAsyncKeyState(VK_SPACE) & 1)
         exploits::double_jump();
 
-    exploits::infinite_ammo();
+    if (settings::menu)
+        esp::draw_menu();
 
-    esp::run();
-    esp::draw_fov(aimbot::radius);
+    if (settings::esp::enabled)
+    {
+        esp::run();
+        esp::draw_fov(aimbot::radius);
 
-  
-   
+    }
+
 }
